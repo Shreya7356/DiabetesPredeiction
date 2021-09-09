@@ -1,0 +1,105 @@
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+
+data_frame =pd.read_csv('D:\miniproject\diabetes.csv')
+
+data_frame.shape
+
+
+
+data_frame.head()
+
+
+print (data_frame.isnull().values.any())
+
+corrmat = data_frame.corr()
+top_corr_features = corrmat.index
+plt.figure(figsize=(10,10))
+#plot heat map
+g=sns.heatmap(data_frame[top_corr_features].corr(),annot=True,cmap="RdYlGn")
+
+
+diabetes_true_count = len(data_frame.loc[data_frame['Outcome'] == 1])
+diabetes_false_count = len(data_frame.loc[data_frame['Outcome'] == 0])
+(diabetes_false_count,diabetes_true_count)
+
+
+
+
+
+
+from sklearn.model_selection import train_test_split
+feature_col_names = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
+predicted_class_names = ['Outcome']
+
+
+
+X = data_frame[feature_col_names].values     
+y = data_frame[predicted_class_names].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+classifier = DecisionTreeClassifier()
+classifier = classifier.fit(X_train, y_train)
+
+y_pred = classifier.predict(X_test)
+print(y_pred)
+
+ac=accuracy_score(y_test,y_pred)
+acc=[]
+acc.append(ac)
+
+print("Accuracy:",accuracy_score(y_test,y_pred))
+
+ax=plt.figure(figsize=(9,4))
+plt.bar(['DecisionTree'],acc,label='Accuracy')
+plt.ylabel('Accuracy Score')
+plt.xlabel('Algortihm')
+plt.show()
+
+
+x=0.00000000000000000
+for i in range(0,20):
+    classifier = DecisionTreeClassifier()
+    classifier = classifier.fit(X_train, y_train)
+    y_pred = classifier.predict(X_test)
+    x=x+accuracy_score(y_test,y_pred)
+    print("Accuracy:",i," :",accuracy_score(y_test,y_pred))
+    
+print("Average accuracy of 20 runs:",x/20)
+
+
+
+
+
+p=int(input(" Enter number of times pregnant:"))
+g=int(input(" Enter the glucose value:"))
+b=int(input(" Enter the bp value:"))
+s=int(input(" Enter the skin thickness value:"))
+i=int(input(" Enter the insulin value:"))
+bm=float(input(" Enter the bmi value:"))
+d=float(input(" Enter the diabetespedigree  value:"))
+a=int(input(" Enter age"))
+
+x_t=[]
+x_t.append(p)
+x_t.append(g)
+x_t.append(b)
+x_t.append(s)
+x_t.append(i)
+x_t.append(bm)
+x_t.append(d)
+x_t.append(a)
+
+x_t=[list(x_t)]
+classifier = DecisionTreeClassifier()
+classifier = classifier.fit(X_train, y_train)
+y_pred = classifier.predict(x_t)
+if y_pred==0:
+    print("No diabtetes(0)")
+else:
+    print("Diabtetes(1)")
